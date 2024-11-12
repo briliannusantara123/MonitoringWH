@@ -12,14 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('cache', function (Blueprint $table) {
-            $table->string('key')->primary();
+            $table->string('key', 50)->primary(); // Batas panjang maksimum 50 karakter
             $table->mediumText('value');
             $table->integer('expiration');
         });
 
         Schema::create('cache_locks', function (Blueprint $table) {
-            $table->string('key')->primary();
-            $table->string('owner');
+            $table->string('key', 100)->primary(); // Batas panjang maksimum 100 karakter untuk kolom 'key'
+            $table->string('owner', 50); // Batas panjang maksimum 50 karakter untuk kolom 'owner'
             $table->integer('expiration');
         });
     }

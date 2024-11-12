@@ -13,22 +13,23 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
+            $table->string('role', 20);
+            $table->string('name', 100); // Mengatur panjang maksimum kolom 'name' menjadi 100 karakter
+            $table->string('email', 150)->unique(); // Mengatur panjang maksimum kolom 'email' menjadi 150 karakter
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password', 255); // Mengatur panjang maksimum kolom 'password' menjadi 255 karakter
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
+            $table->string('email', 150)->primary(); // Mengatur panjang maksimum kolom 'email' menjadi 150 karakter
+            $table->string('token', 64); // Mengatur panjang maksimum kolom 'token' menjadi 64 karakter
             $table->timestamp('created_at')->nullable();
         });
 
         Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->string('id', 100)->primary(); // Mengatur panjang maksimum kolom 'id' menjadi 100 karakter
             $table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();

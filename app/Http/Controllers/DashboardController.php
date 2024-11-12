@@ -11,8 +11,11 @@ class DashboardController extends Controller
     {
         // Ambil semua data dari tabel users
         $users = User::all();
-        
+        $data = [
+	        'title' => 'Dashboard',
+	        'users' => $users,
+	    ];
         // Kirim data ke view 'dashboard'
-        return view('dashboard', ['users' => $users]);
+        return view('dashboard', $data);
     }
 }
