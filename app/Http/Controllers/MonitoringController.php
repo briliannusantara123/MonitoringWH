@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Cabang;
 
 class MonitoringController extends Controller
 {
@@ -10,6 +11,7 @@ class MonitoringController extends Controller
 	{
 	    $data = [
 	        'title' => 'Monitoring',
+	        'cabang' => Cabang::all(),
 	    ];
 	    
 	    return view('pages.monitoring', $data);
