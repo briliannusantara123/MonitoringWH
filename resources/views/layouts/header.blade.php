@@ -18,11 +18,17 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
 <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
-<!-- Font Awesome Icons -->
-<script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- CSS Files -->
 <link href="{{ asset('assets/css/argon-dashboard.css') }}" rel="stylesheet">
+<style type="text/css">
+  .table-responsive {
+    overflow-x: auto; /* Allows horizontal scroll */
+    overflow-y: auto; /* Allows vertical scroll */
+    max-height: 500px; /* Optional: Limits the height of the table */
+}
 
+</style>
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
@@ -32,12 +38,16 @@
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/argon-dashboard/pages/dashboard.html " target="_blank">
         <img src="{{ asset('assets/img/logo-ct-dark.png') }}" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
-        <span class="ms-1 font-weight-bold">Creative Tim</span>
+        <span class="ms-1 font-weight-bold">Monitoring Warehouse</span>
       </a>
     </div>
     <hr class="horizontal dark mt-0">
     <div class="collapse navbar-collapse  w-auto " id="sidenav-collapse-main">
       <ul class="navbar-nav">
+        @php
+          $PermissionUser = App\Models\PermissionUsers::getPermission('Users',Auth::user()->id);
+          $PermissionOutlets = App\Models\PermissionUsers::getPermission('Outlets',Auth::user()->id);
+        @endphp
         <li class="nav-item">
           <a class="nav-link" href="/dashboard">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -46,14 +56,19 @@
             <span class="nav-link-text ms-1">Dashboard</span>
           </a>
         </li>
+        @if(!empty($PermissionOutlets))
+        <label style="margin-left: 20px;">Reporting</label>
         <li class="nav-item">
-          <a class="nav-link " href="/monitoring">
+          <a class="nav-link " href="/outlets">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-calendar-grid-58 text-dark text-sm opacity-10"></i>
             </div>
-            <span class="nav-link-text ms-1">Monitoring</span>
+            <span class="nav-link-text ms-1">Outlets</span>
           </a>
         </li>
+        @endif
+        @if(!empty($PermissionUser))
+        <label style="margin-left: 20px;">Master Data</label>
         <li class="nav-item">
           <a class="nav-link " href="/users">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -62,6 +77,8 @@
             <span class="nav-link-text ms-1">Users</span>
           </a>
         </li>
+        @endif
+        <label style="margin-left: 20px;">Settings</label>
         <li class="nav-item">
           <a class="nav-link " href="/settings">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
@@ -107,7 +124,7 @@
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
             <li class="breadcrumb-item text-sm"><a class="opacity-5 text-white" href="javascript:;">Pages</a></li>
-            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?= $title ?></li>
+            <li class="breadcrumb-item text-sm text-white active" aria-current="page"><?= $sub_title ?></li>
           </ol>
           <h6 class="font-weight-bolder text-white mb-0"><?= $title ?></h6>
         </nav>

@@ -66,6 +66,7 @@
                 </div>
                 <div class="text-center">
                   <button type="submit" class="btn bg-gradient-dark w-100 my-4 mb-2">Login</button>
+                  <a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot password</a>
                 </div>
               </form>
             </div>
@@ -86,12 +87,54 @@
       </div>
     </div>
   </footer>
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Forgot Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="forgotPasswordForm" action="/forgot-password" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+  
   <!-- -------- END FOOTER 3 w/ COMPANY DESCRIPTION WITH LINKS & SOCIAL ICONS & COPYRIGHT ------- -->
   <!--   Core JS Files   -->
   <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
   <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
   <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
   <script src="{{ asset('assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
+  @include('layouts.footer')
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          @if(session('success'))
+              Swal.fire({
+                  icon: 'success',
+                  title: 'Sukses!',
+                  text: '{{ session('success') }}',
+                  confirmButtonText: 'OK'
+              });
+          @endif
+          @if(session('error'))
+              Swal.fire({
+                  icon: 'warning',
+                  title: 'Notification!',
+                  text: '{{ session('error') }}',
+                  confirmButtonText: 'OK'
+              });
+          @endif
+      });
+  </script>
   <script>
     var win = navigator.platform.indexOf('Win') > -1;
     if (win && document.querySelector('#sidenav-scrollbar')) {
