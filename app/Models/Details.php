@@ -8,6 +8,52 @@ use Illuminate\Support\Facades\DB;
 class Details extends Model
 {
     protected $table = 'sh_t_transaction_details';
+    public $timestamps = false;
+    protected $fillable = [
+        'id_real',
+        'trstoreid',
+        'itemcodest',
+        'id_trans',
+        'item_code',
+        'qty',
+        'unit_price',
+        'unit_price_no_sc',
+        'description',
+        'start_time_order',
+        'end_time_order',
+        'end_time_runner',
+        'entry_by',
+        'submit_time',
+        'extra_notes',
+        'disc',
+        'is_cancel',
+        'is_paid',
+        'is_exclude',
+        'order_type',
+        'floor',
+        'session_item',
+        'cabang',
+        'selected_table_no',
+        'seat_id',
+        'delivered_by',
+        'delivered_date',
+        'checker_by',
+        'qty_finish',
+        'processed_by',
+        'qty_processed',
+        'runner_by',
+        'waitress_by',
+        'sort_id',
+        'is_printed',
+        'qty_print',
+        'is_finish',
+        'qty_selected',
+        'runner_scan_date',
+        'waitress_scan_date',
+        'print_code',
+        'as_take_away',
+    ];
+
 
     public static function GetDetailsWH($startDate, $endDate)
     {
@@ -26,51 +72,17 @@ class Details extends Model
             return $item->keyBy('date'); // Kelompokkan data berdasarkan tanggal untuk setiap cabang
         });
     }
-    public static function GetDetailsOUTP($startDate, $endDate)
-    {
-    	return DB::connection('puripagi')
-    	->table('sh_t_transaction_details as details')
-        ->join('sh_t_transactions as transactions', 'details.id_trans', '=', 'transactions.id')
-        ->whereBetween('transactions.create_date', [$startDate, $endDate])
-        ->selectRaw('
-            transactions.cabang, 
-            DATE(transactions.create_date) as date, 
-            SUM(details.unit_price * details.qty) as total_value
-        ') // Hitung total hasil perkalian unit_price * qty
-        ->groupBy('transactions.cabang', 'date') // Kelompokkan berdasarkan cabang dan tanggal
-        ->get()
-        ->groupBy('cabang') // Kelompokkan ulang berdasarkan cabang
-        ->map(function ($item) {
-            return $item->keyBy('date'); // Kelompokkan data berdasarkan tanggal untuk setiap cabang
-        });
-    }
-    public static function GetDetailsOUTM($startDate, $endDate)
-    {
-    	return DB::connection('purimalam')
-    	->table('sh_t_transaction_details as details')
-        ->join('sh_t_transactions as transactions', 'details.id_trans', '=', 'transactions.id')
-        ->whereBetween('transactions.create_date', [$startDate, $endDate])
-        ->selectRaw('
-            transactions.cabang, 
-            DATE(transactions.create_date) as date, 
-            SUM(details.unit_price * details.qty) as total_value
-        ') // Hitung total hasil perkalian unit_price * qty
-        ->groupBy('transactions.cabang', 'date') // Kelompokkan berdasarkan cabang dan tanggal
-        ->get()
-        ->groupBy('cabang') // Kelompokkan ulang berdasarkan cabang
-        ->map(function ($item) {
-            return $item->keyBy('date'); // Kelompokkan data berdasarkan tanggal untuk setiap cabang
-        });
-    }
+
     public static function SumPayment($startDate, $endDate)
     {
     	return DB::table('sh_t_transaction_details as details')
         ->join('sh_t_transactions as transactions', 'details.trstoreid', '=', 'transactions.trstoreid')
-        ->whereBetween('transactions.create_date', [$startDate, $endDate])
+        ->whereBetween(DB::raw('DATE(transactions.create_date)'), [$startDate, $endDate]) // Menggunakan DATE() untuk filter tanggal
         ->select('details.cabang')
-        ->selectRaw('SUM(details.qty * details.unit_price) as total_payment')
+        ->selectRaw('SUM(details.qty * details.unit_price) as total_payment') // Total pembayaran
         ->groupBy('details.cabang')
-        ->pluck('total_payment', 'details.cabang');
+        ->pluck('total_payment', 'details.cabang'); // Mengambil total_payment dengan cabang sebagai key
+
     }
     public static function getTop($id_cabang, $startDate, $endDate)
     {
@@ -82,48 +94,51 @@ class Details extends Model
             'details.unit_price',
             DB::raw('SUM(details.qty) as total_qty')
         )
-        ->where('details.cabang',$id_cabang)
-        ->whereBetween('transactions.create_date', [$startDate, $endDate])
+        ->where('details.cabang', $id_cabang)
+        ->whereBetween(DB::raw('DATE(transactions.create_date)'), [$startDate, $endDate])  // Gunakan DATE() untuk filter hanya Y-m-d
         ->groupBy('details.item_code', 'details.description', 'details.unit_price')
         ->orderBy('total_qty', 'desc')
         ->paginate(10);
+
     }
     public static function getTopChart($id_cabang, $startDate, $endDate)
     {
         return DB::table('sh_t_transactions AS t')
-            ->select(
-                'd.description', // Item name
-                'd.unit_price', // Unit price for each item
-                DB::raw('SUM(d.qty) as total_items') // Total quantity sold
-            )
-            ->join('sh_t_transaction_details AS d', 'd.trstoreid', '=', 't.trstoreid')
-            ->where('d.cabang', $id_cabang)
-            ->whereBetween('t.create_date', [$startDate, $endDate])
-            ->groupBy('d.description', 'd.unit_price') // Group by item name and unit price
-            ->orderBy('total_items', 'desc')
-            ->get();
+        ->select(
+            'd.description', // Item name
+            'd.unit_price', // Unit price for each item
+            DB::raw('SUM(d.qty) as total_items') // Total quantity sold
+        )
+        ->join('sh_t_transaction_details AS d', 'd.trstoreid', '=', 't.trstoreid')
+        ->where('d.cabang', $id_cabang)
+        ->whereBetween(DB::raw('DATE(t.create_date)'), [$startDate, $endDate]) // Gunakan DATE() untuk filter hanya Y-m-d
+        ->groupBy('d.description', 'd.unit_price') // Group by item name and unit price
+        ->orderBy('total_items', 'desc')
+        ->get();
+
     }
     public static function getTopOneMenu($startDate, $endDate)
     {
         return DB::table('sh_t_transaction_details as details')
-            ->join('sh_t_transactions as transactions', 'details.trstoreid', '=', 'transactions.trstoreid')
-            ->whereBetween('transactions.create_date', [$startDate, $endDate])
-            ->select(
-                'details.cabang', // Cabang
-                'details.description', // Nama item
-                DB::raw('SUM(details.qty) as total_qty'), // Total jumlah item
-                'details.unit_price' // Harga satuan
-            )
-            ->groupBy('details.cabang', 'details.description', 'details.unit_price') // Kelompokkan per cabang dan per item
-            ->orderBy('details.cabang') // Pastikan data dikelompokkan berdasarkan cabang
-            ->orderBy('total_qty', 'desc') // Urutkan berdasarkan total qty terbesar
-            ->get()
-            ->groupBy('cabang') // Kelompokkan data berdasarkan cabang
-            ->mapWithKeys(function ($items, $cabang) {
-                $topItem = $items->first(); // Ambil item pertama (qty terbesar)
-                return [$cabang => (array) $topItem]; // Konversi ke array agar bisa diakses dengan []
-            })
-            ->toArray(); // Konversi hasil akhir menjadi array
+        ->join('sh_t_transactions as transactions', 'details.trstoreid', '=', 'transactions.trstoreid')
+        ->whereBetween(DB::raw('DATE(transactions.create_date)'), [$startDate, $endDate]) // Menggunakan DATE() untuk memfilter tanggal
+        ->select(
+            'details.cabang', // Cabang
+            'details.description', // Nama item
+            DB::raw('SUM(details.qty) as total_qty'), // Total jumlah item
+            'details.unit_price' // Harga satuan
+        )
+        ->groupBy('details.cabang', 'details.description', 'details.unit_price') // Kelompokkan per cabang dan per item
+        ->orderBy('details.cabang') // Pastikan data dikelompokkan berdasarkan cabang
+        ->orderBy('total_qty', 'desc') // Urutkan berdasarkan total qty terbesar
+        ->get()
+        ->groupBy('cabang') // Kelompokkan data berdasarkan cabang
+        ->mapWithKeys(function ($items, $cabang) {
+            $topItem = $items->first(); // Ambil item pertama (qty terbesar)
+            return [$cabang => (array) $topItem]; // Konversi ke array agar bisa diakses dengan []
+        })
+        ->toArray(); // Konversi hasil akhir menjadi array
+
     }
    public static function getDetails($id_cabang, $startDate, $endDate)
     {
@@ -151,9 +166,8 @@ class Details extends Model
                 'd.sc_amount',
                 'd.tax_amount',
             )
-            ->where('b.is_paid', 1)
             ->where('b.is_cancel', 0)
-            ->where('b.cabang', $id_cabang) // Filter by id_cabang
+            ->where('b.cabang', $id_cabang)
             ->whereBetween(DB::raw('DATE(d.create_date)'), [$startDate, $endDate])
             ->groupBy('cs.customer_name');
 
@@ -170,14 +184,12 @@ class Details extends Model
     }
     public static function getDetailsReport($trstoreid)
     {
-        // Start building the query
         $query = DB::table('sh_t_transaction_details as d')
             ->where('d.trstoreid', $trstoreid)
-            ->select('d.description', DB::raw('SUM(d.qty) as total_qty'), 'd.unit_price','d.disc') // Select description and sum qty
-            ->groupBy('d.itemcodest') // Group by description
-            ->havingRaw('SUM(d.qty) > 0'); // Exclude descriptions where the sum of qty is 0 or NULL
-
-        return $query->get(); // This will return the results with grouped descriptions and summed qty
+            ->select('d.description', DB::raw('SUM(d.qty) as total_qty'), 'd.unit_price','d.disc')
+            ->groupBy('d.itemcodest')
+            ->havingRaw('SUM(d.qty) > 0');
+        return $query->get(); 
     }
 
     public static function hitungSubTotal($trstoreid)

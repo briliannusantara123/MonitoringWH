@@ -16,6 +16,11 @@
 }
 
 </style>
+<style type="text/css">
+    .row span {
+        color: white;
+    }
+</style>
     <div class="container-fluid">
       <form action="{{ route('outletssearch') }}" method="POST">
         @csrf

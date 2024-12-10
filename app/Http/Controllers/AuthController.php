@@ -20,15 +20,14 @@ class AuthController extends Controller
     {
         // Validasi input
         $request->validate([
-            'name' => 'required', // Menggunakan 'name' sebagai input
+            'name' => 'required',
             'password' => 'required'
         ]);
 
         // Cek kredensial
-        $credentials = $request->only('name', 'password'); // Menggunakan 'name' alih-alih 'email'
+        $credentials = $request->only('name', 'password');
         
         if (Auth::attempt($credentials)) {
-            // Jika berhasil, regenerate session dan redirect ke dashboard
             $request->session()->regenerate();
             return redirect()->intended('/dashboard');
         }

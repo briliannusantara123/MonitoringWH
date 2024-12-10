@@ -7,6 +7,9 @@ use App\Http\Controllers\OutletsController;
 use App\Http\Controllers\CandlestickController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ServerController;
+use App\Http\Controllers\TembakDataController;
+use App\Http\Controllers\LogController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,8 +36,22 @@ Route::middleware(['auth'])->group(function(){
 	Route::get('/settings', [SettingsController::class, 'index']);
 	Route::post('/changePassword', [SettingsController::class, 'changePassword']);
 	Route::post('/changeEmail', [SettingsController::class, 'changeEmail']);
+	Route::get('/cekserver', [ServerController::class, 'index']);
+	Route::get('/get-outlet-data', [DashboardController::class, 'getOutletData'])->name('getOutletData');
+	Route::get('/log', [LogController::class, 'index']);
+	Route::post('/searchlog', [LogController::class, 'index']);
+	Route::post('/updateserver', [LogController::class, 'updateserver']);
+	Route::post('/updateserverD', [LogController::class, 'updateserverD']);
 });
 
+Route::prefix('tembak-data')->group(function () {
+    Route::get('/customer/{id}', [TembakDataController::class, 'customer'])->name('tembak.customer');
+    Route::get('/transactions/{id}', [TembakDataController::class, 'transactions'])->name('tembak.transactions');
+    Route::get('/details/{id}', [TembakDataController::class, 'details'])->name('tembak.details');
+});
+
+Route::get('/closetab', [TembakDataController::class, 'closetab']);
+Route::get('/cekserverauto', [ServerController::class, 'auto']);
 // Route::middleware(['auth', 'role:admin,staff'])->group(function () {
 //     Route::get('/dashboard', [DashboardController::class, 'index']);
 //     Route::post('/searchdashboard', [DashboardController::class, 'index']);

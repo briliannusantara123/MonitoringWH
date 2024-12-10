@@ -31,7 +31,7 @@
   <!-- Font Awesome Icons -->
   <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
   <!-- CSS Files -->
-  <link id="pagestyle" href="{{ asset('assets/css/argon-dashboard.css?v=2.1.0') }}" rel="stylesheet" />
+  <link id="pagestyle" href="{{ asset('public/assets/css/argon-dashboard.css?v=2.1.0') }}" rel="stylesheet" />
 </head>
 
 <body class="">
@@ -95,7 +95,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="forgotPasswordForm" action="/forgot-password" method="POST">
+                <form id="forgotPasswordForm" action="forgot-password" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
@@ -110,10 +110,10 @@
   
   <!-- -------- END FOOTER 3 w/ COMPANY DESCRIPTION WITH LINKS & SOCIAL ICONS & COPYRIGHT ------- -->
   <!--   Core JS Files   -->
-  <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
-  <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
-  <script src="{{ asset('assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
+  <script src="{{ asset('public/assets/js/core/popper.min.js') }}"></script>
+  <script src="{{ asset('public/assets/js/core/bootstrap.min.js') }}"></script>
+  <script src="{{ asset('public/assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+  <script src="{{ asset('public/assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
   @include('layouts.footer')
   <script>
       document.addEventListener('DOMContentLoaded', function() {

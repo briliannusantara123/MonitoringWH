@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('public/assets/img/apple-icon.png') }}">
   <link rel="icon" type="image/png" href="{{ asset('resources/assets/img/favicon.png') }}">
   <title>
     Monitoring Warehouse
@@ -16,11 +16,11 @@
   <link href="https://demos.creative-tim.com/argon-dashboard-pro/assets/css/nucleo-icons.css" rel="stylesheet" />
   <link href="https://demos.creative-tim.com/argon-dashsboard-pro/assets/css/nucleo-svg.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-<link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
-<link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
+<link href="{{ asset('public/assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+<link href="{{ asset('public/assets/css/nucleo-svg.css') }}" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- CSS Files -->
-<link href="{{ asset('assets/css/argon-dashboard.css') }}" rel="stylesheet">
+<link href="{{ asset('public/assets/css/argon-dashboard.css') }}" rel="stylesheet">
 <style type="text/css">
   .table-responsive {
     overflow-x: auto; /* Allows horizontal scroll */
@@ -37,7 +37,7 @@
     <div class="sidenav-header">
       <i class="fas fa-times p-3 cursor-pointer text-secondary opacity-5 position-absolute end-0 top-0 d-none d-xl-none" aria-hidden="true" id="iconSidenav"></i>
       <a class="navbar-brand m-0" href=" https://demos.creative-tim.com/argon-dashboard/pages/dashboard.html " target="_blank">
-        <img src="{{ asset('assets/img/logo-ct-dark.png') }}" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
+        <img src="{{ asset('public/assets/img/logo-ct-dark.png') }}" width="26px" height="26px" class="navbar-brand-img h-100" alt="main_logo">
         <span class="ms-1 font-weight-bold">Monitoring Warehouse</span>
       </a>
     </div>
@@ -47,9 +47,10 @@
         @php
           $PermissionUser = App\Models\PermissionUsers::getPermission('Users',Auth::user()->id);
           $PermissionOutlets = App\Models\PermissionUsers::getPermission('Outlets',Auth::user()->id);
+          $PermissionLog = App\Models\PermissionUsers::getPermission('Log',Auth::user()->id);
         @endphp
         <li class="nav-item">
-          <a class="nav-link" href="/dashboard">
+          <a class="nav-link" href="{{url('dashboard')}}">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-tv-2 text-dark text-sm opacity-10"></i>
             </div>
@@ -59,7 +60,7 @@
         @if(!empty($PermissionOutlets))
         <label style="margin-left: 20px;">Reporting</label>
         <li class="nav-item">
-          <a class="nav-link " href="/outlets">
+          <a class="nav-link " href="{{url('outlets')}}">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-calendar-grid-58 text-dark text-sm opacity-10"></i>
             </div>
@@ -70,7 +71,7 @@
         @if(!empty($PermissionUser))
         <label style="margin-left: 20px;">Master Data</label>
         <li class="nav-item">
-          <a class="nav-link " href="/users">
+          <a class="nav-link " href="{{url('users')}}">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-circle-08 text-dark text-sm opacity-10"></i>
             </div>
@@ -78,9 +79,20 @@
           </a>
         </li>
         @endif
+        @if(!empty($PermissionLog))
+        <label style="margin-left: 20px;">Log</label>
+        <li class="nav-item">
+          <a class="nav-link " href="{{url('log')}}">
+            <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
+              <i class="ni ni-calendar-grid-58 text-dark text-sm opacity-10"></i>
+            </div>
+            <span class="nav-link-text ms-1">Log</span>
+          </a>
+        </li>
+        @endif
         <label style="margin-left: 20px;">Settings</label>
         <li class="nav-item">
-          <a class="nav-link " href="/settings">
+          <a class="nav-link " href="{{url('settings')}}">
             <div class="icon icon-shape icon-sm border-radius-md text-center me-2 d-flex align-items-center justify-content-center">
               <i class="ni ni-settings-gear-65 text-dark text-sm opacity-10"></i>
             </div>
@@ -143,7 +155,7 @@
               </a>
             </li>
             <li class="nav-item px-3 d-flex align-items-center">
-              <a href="/logout" class="nav-link text-white p-0">
+              <a href="{{url('logout')}}" class="nav-link text-white p-0">
                 Logout
                 <i class="fa fa-sign-out-alt fixed-plugin-button-nav cursor-pointer"></i>
               </a>
